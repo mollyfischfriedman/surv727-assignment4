@@ -104,19 +104,70 @@ LIMIT 10;
 
 Find out which districts have the highest numbers of arrests in 2015 and 2016. That is, count the number of arrests in 2015 and 2016, grouped by year and district. List the results in descending order.
 
+```{sql connection = con}
+SELECT year, district, count(*)
+FROM crime
+WHERE year = 2015 OR year = 2016
+GROUP BY year, district
+ORDER BY count(*) DESC
+LIMIT 10;
+```
+
+*The largest number of arrests in 2015 and 2016 occurred in 2015 in district 11 (19,535).*
+
 Lets switch to writing queries from within R via the `DBI` package. Create a query object that counts the number of arrests grouped by `primary_type` of district 11 in year 2016. The results should be displayed in descending order.
+
+``` {r}
+query <-"SELECT primary_type, count(*) FROM crime WHERE year = 2016 AND district = 11 GROUP BY primary_type ORDER BY count(*) DESC LIMIT 10;"
+```
 
 Execute the query.
 
+``` {r}
+dbGetQuery(con, query)
+```
+
 Try to write the very same query, now using the `dbplyr` package. For this, you need to first map the `crime` table to a tibble object in R.
+
+``` {r}
+crime <- tbl(con, 'crime')
+```
 
 Again, count the number of arrests grouped by `primary_type` of district 11 in year 2016, now using `dplyr` syntax.
 
+``` {r}
+crime %>%
+  filter(year==2016 & district==11) %>%
+  group_by(primary_type) %>%
+  summarise(count=n()) %>%
+  arrange(desc(count))
+```
+
 Count the number of arrests grouped by `primary_type` and `year`, still only for district 11. Arrange the result by `year`.
+
+``` {r}
+crime %>%
+  filter(district==11) %>%
+  group_by(primary_type, year) %>%
+  summarise(count=n()) %>%
+  arrange(year)
+```
 
 Assign the results of the query above to a local R object.
 
+``` {r}
+dist11 <- crime %>%
+  filter(district==11) %>%
+  group_by(primary_type, year) %>%
+  summarise(count=n()) %>%
+  arrange(year)
+```
+
 Confirm that you pulled the data to the local environment by displaying the first ten rows of the saved data set.
+
+``` {r}
+head(dist11)
+```
 
 Close the connection.
 
