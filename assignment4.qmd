@@ -1,9 +1,12 @@
 ---
 title: "Assignment 4"
 subtitle: "Due at 11:59pm on November 5."
+author: "Molly Fisch-Friedman"
 format: pdf
 editor: visual
 ---
+
+GitHub link: https://github.com/mollyfischfriedman/surv727-assignment4
 
 This is an individual assignment. Turn in this assignment as an HTML or PDF file to ELMS. Make sure to include the R Markdown or Quarto file that was used to generate it. Include the GitHub link for the repository containing these files.
 
@@ -24,7 +27,7 @@ Go to <https://console.cloud.google.com> and make sure you are logged in a non-u
 After you have initialized a project, paste your project ID into the following chunk.
 
 ```{r}
-project <- "surv-727-test"
+project <- "surv727-assignment-4"
 ```
 
 We will connect to a public database, the Chicago crime database, which has data on crime in Chicago.
