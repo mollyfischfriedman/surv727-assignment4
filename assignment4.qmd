@@ -65,9 +65,42 @@ LIMIT 10;
 
 Next, count the number of arrests grouped by `primary_type` in 2016. Note that is a somewhat similar task as above, with some adjustments on which rows should be considered. Sort the results, i.e. list the number of arrests in a descending order.
 
+```{sql connection = con}
+SELECT primary_type, count(*)
+FROM crime
+WHERE year = 2016
+GROUP BY primary_type
+ORDER BY count(*) DESC
+LIMIT 10;
+```
+
+*There were the most arrests due to theft in 2016 in Chicago.*
+
 We can also use the `date` for grouping. Count the number of arrests grouped by hour of the day in 2016. You can extract the latter information from `date` via `EXTRACT(HOUR FROM date)`. Which time of the day is associated with the most arrests?
 
+```{sql connection = con}
+SELECT EXTRACT(HOUR FROM date), count(*)
+FROM crime
+WHERE year = 2016
+GROUP BY EXTRACT(HOUR FROM date)
+ORDER BY count(*) DESC
+LIMIT 10;
+```
+
+*The 12:00-13:00 UTC hour is associated with the most arrests.*
+
 Focus only on `HOMICIDE` and count the number of arrests for this incident type, grouped by year. List the results in descending order.
+
+```{sql connection = con}
+SELECT year, count(*)
+FROM crime
+WHERE primary_type = 'HOMICIDE'
+GROUP BY year
+ORDER BY count(*) DESC
+LIMIT 10;
+```
+
+*2021 saw the most homicide arrests (811).*
 
 Find out which districts have the highest numbers of arrests in 2015 and 2016. That is, count the number of arrests in 2015 and 2016, grouped by year and district. List the results in descending order.
 
