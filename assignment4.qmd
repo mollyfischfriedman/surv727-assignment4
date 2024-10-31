@@ -144,6 +144,8 @@ crime %>%
   arrange(desc(count))
 ```
 
+*This output matches the output from DBI.*
+
 Count the number of arrests grouped by `primary_type` and `year`, still only for district 11. Arrange the result by `year`.
 
 ```{r}
