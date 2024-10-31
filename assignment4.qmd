@@ -6,7 +6,7 @@ format: pdf
 editor: visual
 ---
 
-GitHub link: https://github.com/mollyfischfriedman/surv727-assignment4
+**GitHub link: https://github.com/mollyfischfriedman/surv727-assignment4**
 
 This is an individual assignment. Turn in this assignment as an HTML or PDF file to ELMS. Make sure to include the R Markdown or Quarto file that was used to generate it. Include the GitHub link for the repository containing these files.
 
@@ -16,6 +16,7 @@ library(tidyverse)
 library(DBI)
 library(dbplyr)
 library(bigrquery)
+library(formatR)
 ```
 
 In this notebook we will use Google BigQuery, "Google's fully managed, petabyte scale, low cost analytics data warehouse". Some instruction on how to connect to Google BigQuery can be found here: <https://db.rstudio.com/databases/big-query/>.
@@ -74,7 +75,7 @@ ORDER BY count(*) DESC
 LIMIT 10;
 ```
 
-*There were the most arrests due to theft in 2016 in Chicago.*
+*In 2016, the category with the highest number of arrests in Chicago was theft.*
 
 We can also use the `date` for grouping. Count the number of arrests grouped by hour of the day in 2016. You can extract the latter information from `date` via `EXTRACT(HOUR FROM date)`. Which time of the day is associated with the most arrests?
 
@@ -83,8 +84,7 @@ SELECT EXTRACT(HOUR FROM date), count(*)
 FROM crime
 WHERE year = 2016
 GROUP BY EXTRACT(HOUR FROM date)
-ORDER BY count(*) DESC
-LIMIT 10;
+ORDER BY count(*) DESC;
 ```
 
 *The 12:00-13:00 UTC hour is associated with the most arrests.*
@@ -96,8 +96,7 @@ SELECT year, count(*)
 FROM crime
 WHERE primary_type = 'HOMICIDE'
 GROUP BY year
-ORDER BY count(*) DESC
-LIMIT 10;
+ORDER BY count(*) DESC;
 ```
 
 *2021 saw the most homicide arrests (811).*
@@ -117,25 +116,27 @@ LIMIT 10;
 
 Lets switch to writing queries from within R via the `DBI` package. Create a query object that counts the number of arrests grouped by `primary_type` of district 11 in year 2016. The results should be displayed in descending order.
 
-``` {r}
-query <-"SELECT primary_type, count(*) FROM crime WHERE year = 2016 AND district = 11 GROUP BY primary_type ORDER BY count(*) DESC LIMIT 10;"
+```{r}
+query <- paste0("SELECT primary_type, count(*) FROM crime WHERE year = 2016 ",
+                "AND district = 11 GROUP BY primary_type ORDER BY count(*) ",
+                "DESC LIMIT 10;")
 ```
 
 Execute the query.
 
-``` {r}
+```{r}
 dbGetQuery(con, query)
 ```
 
 Try to write the very same query, now using the `dbplyr` package. For this, you need to first map the `crime` table to a tibble object in R.
 
-``` {r}
+```{r}
 crime <- tbl(con, 'crime')
 ```
 
 Again, count the number of arrests grouped by `primary_type` of district 11 in year 2016, now using `dplyr` syntax.
 
-``` {r}
+```{r}
 crime %>%
   filter(year==2016 & district==11) %>%
   group_by(primary_type) %>%
@@ -145,7 +146,7 @@ crime %>%
 
 Count the number of arrests grouped by `primary_type` and `year`, still only for district 11. Arrange the result by `year`.
 
-``` {r}
+```{r}
 crime %>%
   filter(district==11) %>%
   group_by(primary_type, year) %>%
@@ -155,7 +156,7 @@ crime %>%
 
 Assign the results of the query above to a local R object.
 
-``` {r}
+```{r}
 dist11 <- crime %>%
   filter(district==11) %>%
   group_by(primary_type, year) %>%
@@ -165,7 +166,7 @@ dist11 <- crime %>%
 
 Confirm that you pulled the data to the local environment by displaying the first ten rows of the saved data set.
 
-``` {r}
+```{r}
 head(dist11)
 ```
 
